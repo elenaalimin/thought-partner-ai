@@ -195,6 +195,7 @@ export default function ProfileSettingsPage() {
         description: 'Analyzing competitor strategies',
         status: 'in_progress',
         priority: 'medium',
+        category: 'Research',
       },
       {
         id: 'ai3',
@@ -202,6 +203,7 @@ export default function ProfileSettingsPage() {
         description: 'User journey maps',
         status: 'completed',
         priority: 'high',
+        category: 'Product',
       },
     ],
     founderTasks: [
@@ -219,6 +221,7 @@ export default function ProfileSettingsPage() {
         description: 'Initial conversations',
         status: 'pending',
         priority: 'high',
+        category: 'Fundraising',
       },
       {
         id: 'f3',
@@ -226,6 +229,7 @@ export default function ProfileSettingsPage() {
         description: 'Core messaging',
         status: 'in_progress',
         priority: 'high',
+        category: 'Strategy',
       },
     ],
     humanDeferrals: [
