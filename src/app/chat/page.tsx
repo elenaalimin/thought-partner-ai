@@ -92,8 +92,8 @@ export default function ChatPage() {
         { role: 'user', content: userMessage },
         {
           role: 'assistant',
-          content: `I can't provide legal advice, but here's what to consider:\n\n` +
-            `For legal matters like this, I'd recommend consulting with a qualified attorney who specializes in startup law. ` +
+          content: `I can&apos;t provide legal advice, but here&apos;s what to consider:\n\n` +
+            `For legal matters like this, I&apos;d recommend consulting with a qualified attorney who specializes in startup law. ` +
             `Here are some vetted resources:\n\n` +
             `• [YC Startup Legal Checklist](https://www.ycombinator.com/library/4Q-startup-legal-checklist)\n` +
             `• [Find a Business Attorney](https://www.avvo.com/business-lawyers)\n` +
@@ -278,7 +278,7 @@ export default function ChatPage() {
                 <CardContent className="pt-6">
                   <h2 className="text-lg font-semibold mb-2">Welcome to your Thought Partner</h2>
                   <p className="text-muted-foreground mb-4">
-                    I'm here to help you think through your startup journey. I'll ask tough questions,
+                    I&apos;m here to help you think through your startup journey. I&apos;ll ask tough questions,
                     challenge your assumptions, and help you make better decisions.
                   </p>
                   {decisionContext && (
@@ -459,7 +459,7 @@ export default function ChatPage() {
               </div>
             </CardHeader>
             <CardContent className="text-xs text-gray-700">
-              I can't provide legal, financial, or medical advice. For those matters, please consult qualified professionals.
+              I can&apos;t provide legal, financial, or medical advice. For those matters, please consult qualified professionals.
             </CardContent>
           </Card>
         </div>

@@ -163,7 +163,7 @@ export default function DecisionsPage() {
               <div className="space-y-4">
                 <Label>Tell us about your situation</Label>
                 <Textarea
-                  placeholder="Describe the decision you're facing..."
+                  placeholder="Describe the decision you&apos;re facing..."
                   rows={6}
                   value={situation}
                   onChange={(e) => {

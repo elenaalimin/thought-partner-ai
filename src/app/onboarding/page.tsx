@@ -123,7 +123,7 @@ export default function OnboardingPage() {
               <CardTitle className="text-xl md:text-2xl">Welcome to Thought Partner AI</CardTitle>
             </div>
             <CardDescription>
-              Let's get to know you and your journey
+              Let&apos;s get to know you and your journey
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -224,7 +224,7 @@ export default function OnboardingPage() {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Who do you want to talk to?</h3>
-                  <p className="text-sm text-gray-600 mb-4">Choose your AI partner's persona</p>
+                  <p className="text-sm text-gray-600 mb-4">Choose your AI partner&apos;s persona</p>
                 </div>
                 <div className="space-y-3">
                   {ROLE_PREFERENCES.map((role) => (
@@ -259,7 +259,7 @@ export default function OnboardingPage() {
             {step === 5 && (
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">What's your biggest blocker?</h3>
+                  <h3 className="text-lg font-semibold mb-2">What&apos;s your biggest blocker?</h3>
                   <p className="text-sm text-gray-600 mb-4">What do you need most right now?</p>
                 </div>
                 <div className="space-y-2">

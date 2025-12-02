@@ -225,17 +225,19 @@ export default function LibraryPage() {
   useEffect(() => {
     // Load user data from localStorage
     const data = localStorage.getItem('onboarding_data')
+    let parsedData: Partial<OnboardingData> | null = null
+    
     if (data) {
       try {
-        const parsed = JSON.parse(data)
-        setUserData(parsed)
+        parsedData = JSON.parse(data)
+        setUserData(parsedData)
       } catch (e) {
         console.error('Error parsing onboarding data:', e)
       }
     }
 
     // Get personalized resources
-    const personalized = getPersonalizedResources(userData || (data ? JSON.parse(data) : null))
+    const personalized = getPersonalizedResources(parsedData)
     setResources(personalized)
   }, [])
 

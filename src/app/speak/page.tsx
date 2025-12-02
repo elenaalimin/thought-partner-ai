@@ -164,7 +164,7 @@ export default function SpeakPage() {
           <Card className="mb-6 border-yellow-200 bg-yellow-50">
             <CardContent className="pt-6">
               <p className="text-sm text-yellow-800">
-                Your browser doesn't support the Web Speech API. Please use Chrome, Edge, or Safari for voice features.
+                Your browser doesn&apos;t support the Web Speech API. Please use Chrome, Edge, or Safari for voice features.
               </p>
             </CardContent>
           </Card>
@@ -232,7 +232,7 @@ export default function SpeakPage() {
             <CardHeader>
               <CardTitle>AI Response</CardTitle>
               <CardDescription>
-                Your co-founder's thoughts
+                Your co-founder&apos;s thoughts
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

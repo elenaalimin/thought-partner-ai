@@ -146,7 +146,7 @@ function HumanDeferralItem({ deferral }: { deferral: HumanDeferral }) {
         <AlertCircle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
           <h4 className="font-medium text-sm text-gray-900 mb-1">{deferral.title}</h4>
-          <p className="text-xs text-gray-600 italic mb-3">"{deferral.message}"</p>
+          <p className="text-xs text-gray-600 italic mb-3">&ldquo;{deferral.message}&rdquo;</p>
         </div>
       </div>
       <div className="space-y-1.5">
@@ -210,6 +210,7 @@ export default function AgentPage() {
         description: 'Analyzing competitor strategies',
         status: 'in_progress',
         priority: 'medium',
+        category: 'Research',
       },
       {
         id: 'ai3',
@@ -217,6 +218,7 @@ export default function AgentPage() {
         description: 'User journey maps',
         status: 'completed',
         priority: 'high',
+        category: 'Product',
       },
     ],
     founderTasks: [
@@ -234,6 +236,7 @@ export default function AgentPage() {
         description: 'Initial conversations',
         status: 'pending',
         priority: 'high',
+        category: 'Fundraising',
       },
       {
         id: 'f3',
@@ -241,6 +244,7 @@ export default function AgentPage() {
         description: 'Core messaging',
         status: 'in_progress',
         priority: 'high',
+        category: 'Strategy',
       },
     ],
     humanDeferrals: [

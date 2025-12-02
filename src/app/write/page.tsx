@@ -221,7 +221,7 @@ export default function WritePage() {
             <CardHeader>
               <CardTitle>AI Feedback</CardTitle>
               <CardDescription>
-                Your co-founder's analysis and suggestions
+                Your co-founder&apos;s analysis and suggestions
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -248,7 +248,7 @@ export default function WritePage() {
                     <div className="text-center">
                       <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <p className="text-sm text-muted-foreground">
-                        Upload files and click "Get Feedback" to receive analysis
+                        Upload files and click &ldquo;Get Feedback&rdquo; to receive analysis
                       </p>
                     </div>
                   </div>
