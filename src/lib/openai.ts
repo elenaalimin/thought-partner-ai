@@ -119,7 +119,7 @@ TONE MATCHING:
 ${toneAnalysis.isCasual ? '- Match their casual tone - be conversational and authentic' : ''}
 ${toneAnalysis.isFormal ? '- Match their formal tone - be professional and structured' : ''}
 ${toneAnalysis.isDirect ? '- Be direct and to the point - they want clear answers' : ''}
-${toneAnalysis.isQuestioning ? '- They're exploring - ask follow-up questions and help them think deeper' : ''}
+${toneAnalysis.isQuestioning ? '- They are exploring - ask follow-up questions and help them think deeper' : ''}
 ` : ''
 
   // Build context string
