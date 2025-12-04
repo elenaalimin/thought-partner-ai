@@ -2,9 +2,15 @@ import OpenAI from 'openai'
 import { getUserProfile } from './supabase-helpers'
 import type { OnboardingData } from '@/types/onboarding'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
+if (!process.env.OPENAI_API_KEY) {
+  console.warn('OPENAI_API_KEY is not set. Chat functionality will not work.')
+}
+
+const openai = process.env.OPENAI_API_KEY 
+  ? new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  : null
 
 export type ChatMode = 'brainstorming' | 'challenge' | 'strategic' | 'technical'
 
@@ -166,6 +172,21 @@ export async function getOpenAIResponse(
   userMessage: string,
   context: ChatContext
 ): Promise<ReadableStream<Uint8Array>> {
+  if (!openai) {
+    const encoder = new TextEncoder()
+    const errorStream = new ReadableStream({
+      start(controller) {
+        const errorData = JSON.stringify({
+          type: 'error',
+          message: 'OpenAI API key is not configured. Please set OPENAI_API_KEY in your environment variables.',
+        })
+        controller.enqueue(encoder.encode(`data: ${errorData}\n\n`))
+        controller.close()
+      },
+    })
+    return errorStream
+  }
+
   const systemPrompt = buildSystemPrompt(context, userMessage)
   
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
@@ -252,6 +273,10 @@ export async function getOpenAIResponseText(
   userMessage: string,
   context: ChatContext
 ): Promise<string> {
+  if (!openai) {
+    throw new Error('OpenAI API key is not configured. Please set OPENAI_API_KEY in your environment variables.')
+  }
+
   const systemPrompt = buildSystemPrompt(context, userMessage)
   
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [

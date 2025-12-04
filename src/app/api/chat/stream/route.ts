@@ -6,10 +6,16 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createSupabaseServerClient()
     
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
-      return new Response('Unauthorized', { status: 401 })
+    // Try to get authenticated user, but don't require it
+    let user: { id: string } | null = null
+    try {
+      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
+      if (!authError && authUser) {
+        user = authUser
+      }
+    } catch (authErr) {
+      // Authentication is optional
+      console.log('Authentication not available for stream save')
     }
 
     const body = await request.json()
@@ -19,14 +25,21 @@ export async function POST(request: NextRequest) {
       return new Response('Missing required fields', { status: 400 })
     }
 
-    // Save assistant message
-    await supabase
-      .from('messages')
-      .insert({
-        conversation_id: conversationId,
-        role: 'assistant',
-        content: assistantMessage,
-      })
+    // Save assistant message only if user is authenticated
+    if (user) {
+      try {
+        await supabase
+          .from('messages')
+          .insert({
+            conversation_id: conversationId,
+            role: 'assistant',
+            content: assistantMessage,
+          })
+      } catch (dbErr) {
+        console.log('Could not save message to database:', dbErr)
+        // Continue anyway - saving is optional
+      }
+    }
 
     return new Response('OK', { status: 200 })
   } catch (error) {
