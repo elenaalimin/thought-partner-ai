@@ -87,9 +87,9 @@ export async function POST(request: NextRequest) {
             const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
             if (!authError && authUser) {
               user = authUser
-              // Get user profile for context
+              // Get user profile for context (user is guaranteed to be non-null here)
               try {
-                profile = await getUserProfile(user.id)
+                profile = await getUserProfile(authUser.id)
               } catch (profileErr) {
                 // Profile fetch failed - that's okay
                 console.log('Could not fetch user profile:', profileErr)
