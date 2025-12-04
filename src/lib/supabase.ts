@@ -47,22 +47,53 @@ export const createSupabaseServerClient = async () => {
       }),
     } as any
   }
-  const cookieStore = await cookies()
-  return createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      storage: {
-        getItem: (key: string) => {
-          return cookieStore.get(key)?.value ?? null
-        },
-        setItem: (key: string, value: string) => {
-          cookieStore.set(key, value)
-        },
-        removeItem: (key: string) => {
-          cookieStore.delete(key)
+  
+  try {
+    const cookieStore = await cookies()
+    return createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        storage: {
+          getItem: (key: string) => {
+            try {
+              return cookieStore.get(key)?.value ?? null
+            } catch {
+              return null
+            }
+          },
+          setItem: (key: string, value: string) => {
+            try {
+              cookieStore.set(key, value)
+            } catch {
+              // Ignore cookie setting errors
+            }
+          },
+          removeItem: (key: string) => {
+            try {
+              cookieStore.delete(key)
+            } catch {
+              // Ignore cookie deletion errors
+            }
+          },
         },
       },
-    },
-  })
+    })
+  } catch (error) {
+    // If cookies() fails or client creation fails, return mock client
+    console.warn('Failed to create Supabase server client, returning mock:', error)
+    return {
+      auth: {
+        getUser: async () => ({ data: { user: null }, error: null }),
+        signOut: async () => ({ error: null }),
+        signInWithPassword: async () => ({ data: { user: null }, error: null }),
+        signUp: async () => ({ data: { user: null }, error: null }),
+      },
+      from: () => ({
+        select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
+        insert: async () => ({ data: null, error: null }),
+        update: () => ({ eq: () => ({ select: () => ({ single: async () => ({ data: null, error: null }) }) }) }),
+      }),
+    } as any
+  }
 }
 
 // Admin client (for server-side operations)

@@ -36,6 +36,13 @@ This will install all required packages including:
    - Create an API key
    - Copy it → `OPENAI_API_KEY`
 
+   **Security Configuration (Optional but Recommended):**
+   - `CHAT_API_KEY` - Optional API key to protect your chat endpoint (recommended for production)
+   - `RATE_LIMIT_MAX_REQUESTS` - Max requests per window (default: 20)
+   - `RATE_LIMIT_WINDOW_MS` - Rate limit window in milliseconds (default: 60000 = 1 minute)
+   - `MAX_MESSAGE_LENGTH` - Maximum message length in characters (default: 5000)
+   - `MAX_REQUEST_SIZE` - Maximum request size in bytes (default: 100000 = 100KB)
+
 ## Step 3: Set Up Supabase Database
 
 1. In your Supabase project dashboard, go to the SQL Editor
