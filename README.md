@@ -4,7 +4,7 @@ A modern web application for solo founders seeking AI-powered guidance and suppo
 
 ## Features
 
-- 🤖 **AI-Powered Chat**: Intelligent conversations with Claude AI, trained on founder wisdom
+- 🤖 **AI-Powered Chat**: Intelligent conversations with OpenAI GPT-4, trained on founder wisdom
 - 🎯 **Context-Aware**: Remembers your background, stage, and project context
 - 🧠 **Multiple Modes**: Brainstorming, Challenge Mode, Strategic Advisor, Technical Guide
 - 💬 **Conversation History**: Persistent chat history with Supabase
@@ -18,7 +18,7 @@ A modern web application for solo founders seeking AI-powered guidance and suppo
 - **Styling**: Tailwind CSS
 - **UI Components**: shadcn/ui
 - **Backend/Database**: Supabase (Auth, PostgreSQL, Storage)
-- **AI Integration**: Anthropic Claude API
+- **AI Integration**: OpenAI GPT-4 API
 - **Deployment**: Vercel (recommended)
 
 ## Getting Started
@@ -27,7 +27,7 @@ A modern web application for solo founders seeking AI-powered guidance and suppo
 
 - Node.js 18+ and npm
 - A Supabase account and project
-- An Anthropic API key
+- An OpenAI API key
 
 ### Installation
 
@@ -49,7 +49,7 @@ Required environment variables:
 - `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anon/public key
 - `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key (for server-side operations)
-- `ANTHROPIC_API_KEY` - Your Anthropic Claude API key
+- `OPENAI_API_KEY` - Your OpenAI API key
 
 3. **Set up Supabase database:**
 
@@ -85,7 +85,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 │   │   └── /ui           # shadcn/ui components
 │   ├── /lib
 │   │   ├── supabase.ts   # Supabase client setup
-│   │   ├── claude.ts     # Claude API integration
+│   │   ├── openai.ts     # OpenAI API integration
 │   │   └── utils.ts      # Utility functions
 │   └── /types            # TypeScript type definitions
 ├── /supabase
@@ -132,7 +132,7 @@ Make sure to set all environment variables in your deployment platform:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `ANTHROPIC_API_KEY`
+- `OPENAI_API_KEY`
 
 ## Future Features
 

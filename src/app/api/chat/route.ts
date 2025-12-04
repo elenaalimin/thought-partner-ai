@@ -1,26 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase'
-import { getClaudeResponse } from '@/lib/claude'
+import { getOpenAIResponse } from '@/lib/openai'
 import { getUserProfile } from '@/lib/supabase-helpers'
-import type { ChatMode } from '@/lib/claude'
+import type { ChatMode } from '@/lib/openai'
 
 export async function POST(request: NextRequest) {
   try {
-    // TEMPORARILY COMMENTED OUT - Supabase
-    // const supabase = await createSupabaseServerClient()
-    // 
-    // // Get authenticated user
-    // const { data: { user }, error: authError } = await supabase.auth.getUser()
-    // 
-    // if (authError || !user) {
-    //   return NextResponse.json(
-    //     { error: 'Unauthorized' },
-    //     { status: 401 }
-    //   )
-    // }
+    const supabase = await createSupabaseServerClient()
     
-    // Mock user for testing
-    const user = { id: 'mock-user-id' }
+    // Get authenticated user
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
 
     const body = await request.json()
     const { message, conversationId, mode = 'brainstorming' } = body
@@ -38,21 +34,20 @@ export async function POST(request: NextRequest) {
     // Get conversation history if conversationId exists
     let conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }> = []
     
-    // TEMPORARILY COMMENTED OUT - Supabase
-    // if (conversationId) {
-    //   const { data: messages } = await supabase
-    //     .from('messages')
-    //     .select('role, content')
-    //     .eq('conversation_id', conversationId)
-    //     .order('created_at', { ascending: true })
-    // 
-    //   if (messages) {
-    //     conversationHistory = messages.map(msg => ({
-    //       role: msg.role as 'user' | 'assistant',
-    //       content: msg.content,
-    //     }))
-    //   }
-    // }
+    if (conversationId) {
+      const { data: messages } = await supabase
+        .from('messages')
+        .select('role, content')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true })
+    
+      if (messages) {
+        conversationHistory = messages.map((msg: { role: string; content: string }) => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content,
+        }))
+      }
+    }
 
     // Create chat context
     const context = {
@@ -65,46 +60,45 @@ export async function POST(request: NextRequest) {
       mode: mode as ChatMode,
     }
 
-    // TEMPORARILY COMMENTED OUT - Supabase database operations
     // Save user message to database first
     let finalConversationId = conversationId
 
-    // if (!finalConversationId) {
-    //   // Create new conversation
-    //   const { data: newConversation, error: convError } = await supabase
-    //     .from('conversations')
-    //     .insert({
-    //       user_id: user.id,
-    //       title: message.substring(0, 50) + (message.length > 50 ? '...' : ''),
-    //     })
-    //     .select()
-    //     .single()
-    // 
-    //   if (convError || !newConversation) {
-    //     console.error('Error creating conversation:', convError)
-    //   } else {
-    //     finalConversationId = newConversation.id
-    //   }
-    // } else {
-    //   // Update conversation updated_at
-    //   await supabase
-    //     .from('conversations')
-    //     .update({ updated_at: new Date().toISOString() })
-    //     .eq('id', finalConversationId)
-    // }
-    // 
-    // if (finalConversationId) {
-    //   await supabase
-    //     .from('messages')
-    //     .insert({
-    //       conversation_id: finalConversationId,
-    //       role: 'user',
-    //       content: message,
-    //     })
-    // }
+    if (!finalConversationId) {
+      // Create new conversation
+      const { data: newConversation, error: convError } = await supabase
+        .from('conversations')
+        .insert({
+          user_id: user.id,
+          title: message.substring(0, 50) + (message.length > 50 ? '...' : ''),
+        })
+        .select()
+        .single()
+    
+      if (convError || !newConversation) {
+        console.error('Error creating conversation:', convError)
+      } else {
+        finalConversationId = newConversation.id
+      }
+    } else {
+      // Update conversation updated_at
+      await supabase
+        .from('conversations')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', finalConversationId)
+    }
+    
+    if (finalConversationId) {
+      await supabase
+        .from('messages')
+        .insert({
+          conversation_id: finalConversationId,
+          role: 'user',
+          content: message,
+        })
+    }
 
-    // Get streaming response from Claude
-    const stream = await getClaudeResponse(message, context)
+    // Get streaming response from OpenAI
+    const stream = await getOpenAIResponse(message, context)
 
     // Return streaming response with conversation ID in headers
     return new Response(stream, {

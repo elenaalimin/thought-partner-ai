@@ -10,7 +10,7 @@ This will install all required packages including:
 - Next.js 14+
 - React & TypeScript
 - Supabase client
-- Anthropic SDK
+- OpenAI SDK
 - Tailwind CSS
 - shadcn/ui dependencies
 - And more...
@@ -31,10 +31,10 @@ This will install all required packages including:
    - Copy your anon/public key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - Copy your service_role key → `SUPABASE_SERVICE_ROLE_KEY` (keep this secret!)
 
-   **Anthropic Setup:**
-   - Go to https://console.anthropic.com
+   **OpenAI Setup:**
+   - Go to https://platform.openai.com
    - Create an API key
-   - Copy it → `ANTHROPIC_API_KEY`
+   - Copy it → `OPENAI_API_KEY`
 
 ## Step 3: Set Up Supabase Database
 
@@ -75,9 +75,9 @@ If you see TypeScript errors about missing modules, make sure you've run `npm in
 - Check that your Supabase project is active
 - Ensure the migration has been run successfully
 
-### Claude API Errors
-- Verify your `ANTHROPIC_API_KEY` is correct
-- Check your Anthropic account has credits/quota available
+### OpenAI API Errors
+- Verify your `OPENAI_API_KEY` is correct
+- Check your OpenAI account has credits/quota available
 - Make sure you're using a valid API key
 
 ### Authentication Issues
@@ -87,7 +87,7 @@ If you see TypeScript errors about missing modules, make sure you've run `npm in
 
 ## Next Steps
 
-- Customize the system prompt in `src/lib/claude.ts`
+- Customize the system prompt in `src/lib/openai.ts`
 - Add more UI components from shadcn/ui as needed
 - Implement the voice banter feature
 - Build out the decision tree tool

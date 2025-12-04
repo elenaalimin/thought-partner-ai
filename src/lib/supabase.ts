@@ -1,60 +1,82 @@
-// TEMPORARILY COMMENTED OUT - Supabase
-// import { createClient } from '@supabase/supabase-js'
-// import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
 
-// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-// const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-// if (!supabaseUrl || !supabaseAnonKey) {
-//   throw new Error('Missing Supabase environment variables')
-// }
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.warn('Missing Supabase environment variables. Some features may not work.')
+}
 
 // Client-side Supabase client
 export const createSupabaseClient = () => {
-  // TEMPORARILY COMMENTED OUT
-  // return createClient(supabaseUrl, supabaseAnonKey)
-  return null as any
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('Supabase not configured. Returning mock client.')
+    return {
+      auth: {
+        getUser: async () => ({ data: { user: null }, error: null }),
+        signOut: async () => ({ error: null }),
+        signInWithPassword: async () => ({ data: { user: null }, error: null }),
+        signUp: async () => ({ data: { user: null }, error: null }),
+      },
+      from: () => ({
+        select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
+        insert: async () => ({ data: null, error: null }),
+        update: () => ({ eq: () => ({ select: () => ({ single: async () => ({ data: null, error: null }) }) }) }),
+      }),
+    } as any
+  }
+  return createClient(supabaseUrl, supabaseAnonKey)
 }
 
 // Server-side Supabase client
 export const createSupabaseServerClient = async () => {
-  // TEMPORARILY COMMENTED OUT
-  // const cookieStore = await cookies()
-  // return createClient(supabaseUrl, supabaseAnonKey, {
-  //   cookies: {
-  //     get(name: string) {
-  //       return cookieStore.get(name)?.value
-  //     },
-  //   },
-  // })
-  return {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('Supabase not configured. Returning mock client.')
+    return {
+      auth: {
+        getUser: async () => ({ data: { user: null }, error: null }),
+        signOut: async () => ({ error: null }),
+        signInWithPassword: async () => ({ data: { user: null }, error: null }),
+        signUp: async () => ({ data: { user: null }, error: null }),
+      },
+      from: () => ({
+        select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
+        insert: async () => ({ data: null, error: null }),
+        update: () => ({ eq: () => ({ select: () => ({ single: async () => ({ data: null, error: null }) }) }) }),
+      }),
+    } as any
+  }
+  const cookieStore = await cookies()
+  return createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
-      getUser: async () => ({ data: { user: { id: 'mock-user-id' } }, error: null }),
-      signOut: async () => ({ error: null }),
-      signInWithPassword: async () => ({ data: { user: { id: 'mock-user-id' } }, error: null }),
-      signUp: async () => ({ data: { user: { id: 'mock-user-id' } }, error: null }),
+      storage: {
+        getItem: (key: string) => {
+          return cookieStore.get(key)?.value ?? null
+        },
+        setItem: (key: string, value: string) => {
+          cookieStore.set(key, value)
+        },
+        removeItem: (key: string) => {
+          cookieStore.delete(key)
+        },
+      },
     },
-    from: () => ({
-      select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
-      insert: () => ({ select: () => ({ single: async () => ({ data: null, error: null }) }) }),
-      update: () => ({ eq: () => ({ select: () => ({ single: async () => ({ data: null, error: null }) }) }) }),
-    }),
-  } as any
+  })
 }
 
 // Admin client (for server-side operations)
 export const createSupabaseAdminClient = () => {
-  // TEMPORARILY COMMENTED OUT
-  // const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  // if (!serviceRoleKey) {
-  //   throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY')
-  // }
-  // return createClient(supabaseUrl, serviceRoleKey, {
-  //   auth: {
-  //     autoRefreshToken: false,
-  //     persistSession: false
-  //   }
-  // })
-  return null as any
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+  if (!serviceRoleKey || !supabaseUrl) {
+    console.warn('Supabase admin not configured. Returning null.')
+    return null as any
+  }
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  })
 }
 

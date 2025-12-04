@@ -1,8 +1,8 @@
-import Anthropic from '@anthropic-ai/sdk'
+import OpenAI from 'openai'
 import { getUserProfile } from './supabase-helpers'
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
 })
 
 export type ChatMode = 'brainstorming' | 'challenge' | 'strategic' | 'technical'
@@ -54,58 +54,92 @@ Remember: Great founders don't need yes-men. They need someone who will help the
   return basePrompt
 }
 
-export async function getClaudeResponse(
+export async function getOpenAIResponse(
   userMessage: string,
   context: ChatContext
 ): Promise<ReadableStream<Uint8Array>> {
   const systemPrompt = buildSystemPrompt(context)
   
-  const messages: Anthropic.MessageParam[] = [
+  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    {
+      role: 'system',
+      content: systemPrompt,
+    },
     ...(context.conversationHistory || []).map(msg => ({
-      role: (msg.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+      role: msg.role,
       content: msg.content,
     })),
     {
-      role: 'user' as const,
+      role: 'user',
       content: userMessage,
     },
   ]
 
-  const stream = await anthropic.messages.stream({
-    model: 'claude-3-5-sonnet-20241022',
+  const stream = await openai.chat.completions.create({
+    model: 'gpt-4-turbo-preview',
+    messages: messages,
     max_tokens: 4096,
-    system: systemPrompt,
-    messages: messages as Anthropic.MessageParam[],
+    stream: true,
   })
 
-  return stream.toReadableStream()
+  // Convert OpenAI stream to ReadableStream
+  const encoder = new TextEncoder()
+  const readable = new ReadableStream({
+    async start(controller) {
+      try {
+        for await (const chunk of stream) {
+          const content = chunk.choices[0]?.delta?.content || ''
+          if (content) {
+            // Format as SSE (Server-Sent Events) for compatibility
+            const data = JSON.stringify({
+              type: 'content_block_delta',
+              delta: {
+                type: 'text_delta',
+                text: content,
+              },
+            })
+            controller.enqueue(encoder.encode(`data: ${data}\n\n`))
+          }
+        }
+        // Send completion message
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'message_stop' })}\n\n`))
+        controller.close()
+      } catch (error) {
+        controller.error(error)
+      }
+    },
+  })
+
+  return readable
 }
 
-export async function getClaudeResponseText(
+export async function getOpenAIResponseText(
   userMessage: string,
   context: ChatContext
 ): Promise<string> {
   const systemPrompt = buildSystemPrompt(context)
   
-  const messages: Anthropic.MessageParam[] = [
+  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    {
+      role: 'system',
+      content: systemPrompt,
+    },
     ...(context.conversationHistory || []).map(msg => ({
-      role: (msg.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+      role: msg.role,
       content: msg.content,
     })),
     {
-      role: 'user' as const,
+      role: 'user',
       content: userMessage,
     },
   ]
 
-  const response = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4-turbo-preview',
+    messages: messages,
     max_tokens: 4096,
-    system: systemPrompt,
-    messages: messages as Anthropic.MessageParam[],
   })
 
-  return response.content[0].type === 'text' ? response.content[0].text : ''
+  return response.choices[0]?.message?.content || ''
 }
-
 
