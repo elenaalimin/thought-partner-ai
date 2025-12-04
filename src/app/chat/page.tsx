@@ -193,6 +193,18 @@ function ChatContent() {
                   }
                 }
                 
+                if (data.type === 'error') {
+                  setMessages((prev) => [
+                    ...prev,
+                    {
+                      role: 'assistant',
+                      content: `I encountered an error: ${data.message || 'Unknown error'}. Please check your API configuration and try again.`,
+                    },
+                  ])
+                  setAssistantStream('')
+                  break
+                }
+                
                 if (data.type === 'message_stop') {
                   if (currentConvId && fullResponse) {
                     await fetch('/api/chat/stream', {

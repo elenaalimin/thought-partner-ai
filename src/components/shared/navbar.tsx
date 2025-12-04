@@ -13,7 +13,9 @@ import {
   Crown,
   GitBranch,
   TrendingUp,
-  BookOpen
+  BookOpen,
+  Mic,
+  FileText
 } from 'lucide-react'
 // TEMPORARILY COMMENTED OUT - Supabase
 // import { createSupabaseClient } from '@/lib/supabase'
@@ -34,6 +36,8 @@ export function Navbar() {
     { href: '/dashboard', label: 'Home', icon: Home },
     { href: '/decisions', label: 'Decisions', icon: GitBranch },
     { href: '/chat', label: 'Chat', icon: MessageSquare },
+    { href: '/speak', label: 'Speak', icon: Mic, comingSoon: true },
+    { href: '/write', label: 'Write', icon: FileText, comingSoon: true },
     { href: '/journey', label: 'Journey', icon: TrendingUp },
     { href: '/resources', label: 'Resources', icon: BookOpen },
     { href: '/agent', label: 'Agent', icon: Sparkles, premium: true },
@@ -63,6 +67,11 @@ export function Navbar() {
                       {item.label}
                       {item.premium && (
                         <Crown className="h-3 w-3 text-yellow-500" />
+                      )}
+                      {item.comingSoon && (
+                        <span className="text-[0.6rem] font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded ml-1">
+                          Soon
+                        </span>
                       )}
                     </Button>
                   </Link>

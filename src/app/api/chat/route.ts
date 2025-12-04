@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { message, conversationId, mode = 'brainstorming' } = body
+    const { message, conversationId, mode = 'brainstorming', context: requestContext } = body
 
     if (!message || typeof message !== 'string') {
       return NextResponse.json(
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create chat context
+    // Create chat context with onboarding data
     const context = {
       userId: user.id,
       fieldOfStudy: profile?.field_of_study,
@@ -58,6 +58,8 @@ export async function POST(request: NextRequest) {
       projectContext: profile?.context,
       conversationHistory,
       mode: mode as ChatMode,
+      onboarding: requestContext?.onboarding || null,
+      decisionPath: requestContext?.decisionPath || null,
     }
 
     // Save user message to database first
@@ -111,10 +113,28 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Chat API error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
+    
+    // Return error as SSE stream so frontend can handle it
+    const encoder = new TextEncoder()
+    const errorStream = new ReadableStream({
+      start(controller) {
+        const errorData = JSON.stringify({
+          type: 'error',
+          message: errorMessage,
+        })
+        controller.enqueue(encoder.encode(`data: ${errorData}\n\n`))
+        controller.close()
+      },
+    })
+    
+    return new Response(errorStream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    })
   }
 }
 

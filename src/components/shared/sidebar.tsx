@@ -111,8 +111,10 @@ export function Sidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-purple-200/50">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <BrainIcon size={32} className="text-gray-900 flex-shrink-0" />
-          <span className="font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <div className="flex-shrink-0">
+            <BrainIcon size={40} />
+          </div>
+          <span className="font-bold text-lg bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent whitespace-nowrap">
             Thought Partner AI
           </span>
         </Link>
